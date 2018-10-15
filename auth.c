@@ -43,6 +43,9 @@ struct auth_s *new_auth(void) {
 	tmp->hashnt = 0;
 	tmp->hashlm = 0;
 	tmp->flags = 0;
+#ifdef ENABLE_KERBEROS
+	tmp->haskrb = 0;
+#endif
 
 	return tmp;
 }
@@ -103,6 +106,9 @@ void dump_auth(struct auth_s *creds) {
 	printf("HashNT:     %d\n", creds->hashnt);
 	printf("HashLM:     %d\n", creds->hashlm);
 	printf("Flags:      %X\n", creds->flags);
+#ifdef ENABLE_KERBEROS
+	printf("HasKrb:     %d\n", creds->haskrb);
+#endif
 	if (creds->passntlm2) {
 		tmp = printmem(creds->passntlm2, 16, 8);
 		printf("PassNTLMv2: %s\n", tmp);

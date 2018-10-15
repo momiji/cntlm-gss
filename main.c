@@ -1188,7 +1188,7 @@ int main(int argc, char **argv) {
 			g_creds->hashnt = 0;
 			g_creds->hashlm = 0;
 			g_creds->hashntlm2 = 0;
-			syslog(LOG_INFO, "Forcing GSS auth.\n");
+			syslog(LOG_INFO, "Forcing GSS authentication.\n");
 #endif				
 		} else {
 			syslog(LOG_ERR, "Unknown NTLM auth combination.\n");
@@ -1281,9 +1281,13 @@ int main(int argc, char **argv) {
 	}
 
 #ifdef ENABLE_KERBEROS
-	g_creds->haskrb |= check_credential();
-	if(g_creds->haskrb & KRB_CREDENTIAL_AVAILABLE)
-		syslog(LOG_INFO, "Using cached credential for GSS auth.\n");
+	if (g_creds->haskrb) {
+		g_creds->haskrb |= check_credential();
+		if(!(g_creds->haskrb & KRB_CREDENTIAL_AVAILABLE)) {
+			syslog(LOG_INFO, "No cached credential for GSS authentication, terminating\n");
+			exit(1);
+		}
+	}
 #endif
 
 	auth_strcpy(g_creds, user, cuser);
